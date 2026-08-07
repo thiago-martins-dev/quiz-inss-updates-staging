@@ -2,12 +2,24 @@
   "schemaVersion": 1,
   "channel": "stable",
   "enabled": true,
-  "contentVersion": "1.0.0",
+  "contentVersion": "1.0.1",
   "minimumAppVersion": "1.0.0",
-  "publishedAt": "2026-07-18T22:20:01-03:00",
+  "publishedAt": "2026-08-07T23:28:18.663491Z",
   "checkIntervalHours": 24,
-  "packages": [],
+  "packages": [
+    {
+      "id": "legal-0c89ea7df7aa778d6e20167da89ad49d",
+      "type": "legal-content",
+      "version": "1.0.1",
+      "url": "https://github.com/thiago-martins-dev/quiz-inss-updates-staging/releases/download/content-v1.0.1-staging/quiz-inss-staging-1.0.1.json",
+      "sha256": "b90d51ec7cdb9c9f72d948170077ce4e47f072526229bb86ed482faaa6f70c75",
+      "sizeBytes": 1344,
+      "compression": "none",
+      "required": false,
+      "description": "Pacote declarativo inofensivo de homologacao."
+    }
+  ],
   "message": {
-    "pt-BR": "Estrutura inicial do servidor de atualizações do Quiz INSS Premium."
+    "pt-BR": "Homologacao automatizada do sistema de atualizacoes."
   }
 }
