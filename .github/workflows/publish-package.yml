@@ -1,6 +1,7 @@
 name: Publish declarative package
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -26,6 +27,9 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          git fetch origin main
+          git checkout -B main origin/main
+          initial_head="$(git rev-parse HEAD)"
           package="$(find packages -maxdepth 1 -type f -name '*.json' | sort | tail -n 1)"
           test -n "$package"
           eval "$(python - "$package" <<'PY'
@@ -91,7 +95,7 @@ jobs:
           path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
           git fetch origin main
-          test "$(git rev-parse origin/main)" = "$GITHUB_SHA"
+          test "$(git rev-parse origin/main)" = "$initial_head"
           if git diff --quiet -- manifest.json; then
             echo "Manifesto ja publicado; idempotencia confirmada."
             release_created=false
