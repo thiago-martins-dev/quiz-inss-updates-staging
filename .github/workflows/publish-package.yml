@@ -2,6 +2,12 @@ name: Publish declarative package
 
 on:
   workflow_dispatch:
+    inputs:
+      rollback_probe:
+        description: "Create and roll back an isolated test release"
+        required: false
+        default: false
+        type: boolean
   push:
     branches: [main]
     paths:
@@ -54,7 +60,11 @@ jobs:
               print(f"{key}={shlex.quote(str(value))}")
           PY
           )"
-          tag="content-v${VERSION}-staging"
+          if [[ "${{ inputs.rollback_probe || false }}" == "true" ]]; then
+            tag="rollback-probe-${GITHUB_RUN_ID}"
+          else
+            tag="content-v${VERSION}-staging"
+          fi
           release_created=false
           rollback() {
             if [[ "$release_created" == true ]]; then
@@ -72,6 +82,10 @@ jobs:
           curl --fail --location --silent --show-error "$asset_url" --output /tmp/remote-package.json
           test "$(wc -c < /tmp/remote-package.json | tr -d ' ')" = "$SIZE"
           test "$(sha256sum /tmp/remote-package.json | cut -d' ' -f1)" = "$SHA"
+          if [[ "${{ inputs.rollback_probe || false }}" == "true" ]]; then
+            echo "Rollback probe: forcing failure after verified release."
+            false
+          fi
           python - "$asset_url" "$SHA" "$SIZE" "$PACKAGE_ID" "$VERSION" "$TO_VERSION" "$MIN_APP" <<'PY'
           import datetime, json, pathlib, sys
           url, sha, size, package_id, version, content_version, minimum = sys.argv[1:]
